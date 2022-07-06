@@ -1,0 +1,1 @@
+export 'package:fl_chat/models/usuario.dart';
