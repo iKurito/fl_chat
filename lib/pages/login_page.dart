@@ -49,8 +49,16 @@ class _FormState extends State<_Form> {
   final passCtrl = TextEditingController();
 
   @override
+  void dispose() {
+    emailCtrl.dispose();
+    passCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final socketService = Provider.of<SocketService>(context);
     
     return Container(
       margin: const EdgeInsets.only(top: 40),
@@ -77,8 +85,11 @@ class _FormState extends State<_Form> {
                 FocusScope.of(context).unfocus();
                 final loginOk = await authService.login(emailCtrl.text.trim(), passCtrl.text.trim());
                 if (loginOk) {
+                  socketService.connect();
+                  if (!mounted) return;
                   Navigator.pushReplacementNamed(context, 'usuarios');
                 } else {
+                  if (!mounted) return; // https://dart-lang.github.io/linter/lints/use_build_context_synchronously.html
                   // Mostrar alerta
                   mostrarAlerta(context, 'Login incorrecto', 'Revise sus credenciales nuevamente');
                 }
