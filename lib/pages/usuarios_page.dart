@@ -1,4 +1,6 @@
+import 'package:fl_chat/services/services.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -23,14 +25,21 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    final usuario = authService.usuario;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mi Nombre', style: TextStyle(color: Colors.black87)),
+        title: Text(usuario?.nombre ?? 'Sin Nombre', style: const TextStyle(color: Colors.black87)),
         elevation: 1,
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.exit_to_app, color: Colors.black87),
-          onPressed: () {},
+          onPressed: () {
+            // TODO: Desconecta del socket server
+            Navigator.pushReplacementNamed(context, 'login');
+            AuthService.deleteToken();
+          },
         ),
         actions: [
           Container(
@@ -45,7 +54,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
         onRefresh: _cargarUsuarios,
         header: WaterDropHeader(
           complete: Icon(Icons.check, color: Colors.blue[400]),
-          waterDropColor: Colors.blue[400] ?? Colors.blue,
+          waterDropColor: Colors.blue.withOpacity(0.4),
         ),
         child: _listViewUsuarios()
       )

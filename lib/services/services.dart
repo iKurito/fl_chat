@@ -1,0 +1,1 @@
+export 'package:fl_chat/services/auth_service.dart';
